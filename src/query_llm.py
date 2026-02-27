@@ -46,10 +46,10 @@ def call_with_retry(client: OpenAI, prompt: str) -> str:
 def query_descriptions() -> pd.DataFrame:
     """Load descriptions and query the LLM for score and qualitative response."""
     if not SETTINGS.api_key:
-        raise ValueError("GEMINI_API_KEY (or OPENAI_API_KEY) is required to run query_llm.py")
+        raise ValueError("openai_api_key is required in config.yaml to run query_llm.py")
 
     client = OpenAI(api_key=SETTINGS.api_key, base_url=SETTINGS.api_base_url)
-    descriptions = pd.read_csv(INPUT_PATH)
+    descriptions = pd.read_csv(INPUT_PATH, usecols=["id", "description"])
     results = []
     delay_seconds = 60 / max(1, SETTINGS.requests_per_minute)
 

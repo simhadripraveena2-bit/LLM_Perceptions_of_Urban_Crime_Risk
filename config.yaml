@@ -1,0 +1,23 @@
+census_api_key: "YOUR_KEY_HERE"
+openai_api_key: "YOUR_KEY_HERE"
+
+cities:
+  - New York
+  - Los Angeles
+  - Chicago
+  - Houston
+  - Phoenix
+  - Philadelphia
+  - San Antonio
+  - San Diego
+  - Dallas
+  - San Jose
+
+census_year: 2022
+min_population: 500
+
+amenity_score_threshold:
+  community_rich: 3
+  financially_underserved: -1
+
+osm_cache_dir: "data/osm_cache"

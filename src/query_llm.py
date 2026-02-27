@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Optional
 
 import pandas as pd
-from openai import OpenAI
+from groq import Groq
 
 from config import SETTINGS
 
@@ -25,16 +25,20 @@ def extract_numeric_score(text: str) -> Optional[float]:
     return min(max(score, 1.0), 10.0)
 
 
-def call_with_retry(client: OpenAI, prompt: str) -> str:
+def call_with_retry(client: Groq, prompt: str) -> str:
     """Call the model with retries and exponential backoff."""
     for attempt in range(SETTINGS.max_retries):
         try:
-            response = client.responses.create(
+            # Research methods note: llama-3.3-70b-versatile was selected for consistent,
+            # high-quality text generation and deterministic scoring with temperature=0.0.
+            response = client.chat.completions.create(
                 model=SETTINGS.model_name,
-                input=prompt,
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.0,
+                max_tokens=50,
                 timeout=SETTINGS.request_timeout_seconds,
             )
-            return response.output_text.strip()
+            return response.choices[0].message.content.strip()
         except Exception:
             if attempt == SETTINGS.max_retries - 1:
                 raise
@@ -46,9 +50,9 @@ def call_with_retry(client: OpenAI, prompt: str) -> str:
 def query_descriptions() -> pd.DataFrame:
     """Load descriptions and query the LLM for score and qualitative response."""
     if not SETTINGS.api_key:
-        raise ValueError("openai_api_key is required in config.yaml to run query_llm.py")
+        raise ValueError("groq_api_key is required in config.yaml to run query_llm.py")
 
-    client = OpenAI(api_key=SETTINGS.api_key, base_url=SETTINGS.api_base_url)
+    client = Groq(api_key=SETTINGS.api_key)
     descriptions = pd.read_csv(INPUT_PATH, usecols=["id", "description"])
     results = []
     delay_seconds = 60 / max(1, SETTINGS.requests_per_minute)
@@ -74,6 +78,8 @@ def query_descriptions() -> pd.DataFrame:
                 "id": row["id"],
                 "numeric_score": score,
                 "qualitative_response": qualitative_response,
+                "model_used": SETTINGS.model_name,
+                "timestamp": pd.Timestamp.utcnow().isoformat(),
             }
         )
         time.sleep(delay_seconds)

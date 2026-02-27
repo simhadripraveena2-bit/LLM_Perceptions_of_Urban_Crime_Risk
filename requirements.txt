@@ -15,5 +15,5 @@ seaborn
 wordcloud
 streamlit
 pydeck
-openai
+groq
 statsmodels

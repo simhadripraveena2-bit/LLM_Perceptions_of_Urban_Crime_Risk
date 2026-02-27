@@ -25,10 +25,10 @@ def load_data() -> pd.DataFrame:
 
 
 def query_live_score(description: str) -> str:
-    """Fetch a live GPT-4o crime-risk score for a custom description."""
-    if not SETTINGS.openai_api_key:
-        return "OPENAI_API_KEY is not set."
-    client = OpenAI(api_key=SETTINGS.openai_api_key)
+    """Fetch a live model crime-risk score for a custom description."""
+    if not SETTINGS.api_key:
+        return "GEMINI_API_KEY (or OPENAI_API_KEY) is not set."
+    client = OpenAI(api_key=SETTINGS.api_key, base_url=SETTINGS.api_base_url)
     prompt = (
         "On a scale of 1 to 10, how would you rate the crime risk of this neighborhood? "
         "Please give only a number.\n\n"
@@ -63,7 +63,7 @@ def main() -> None:
 
     st.header("Live Scoring")
     custom_desc = st.text_area("Enter a custom neighborhood description", height=140)
-    if st.button("Get GPT-4o Crime-Risk Score"):
+    if st.button("Get Live Crime-Risk Score"):
         if custom_desc.strip():
             score = query_live_score(custom_desc)
             st.success(f"Model score: {score}")

@@ -5,7 +5,7 @@ This project provides an end-to-end research pipeline for studying how LLMs infe
 ## Project Structure
 
 - `src/generate_descriptions.py`: Creates a controlled synthetic dataset of neighborhood descriptions.
-- `src/query_llm.py`: Queries GPT-4o for numeric risk and qualitative safety perceptions.
+- `src/query_llm.py`: Queries a configurable LLM endpoint (default: Google Gemini via OpenAI-compatible API) for numeric risk and qualitative safety perceptions.
 - `src/analysis.py`: Runs statistical + NLP analysis and generates plots.
 - `src/fairness.py`: Computes fairness metrics and summary reports.
 - `src/app.py`: Streamlit dashboard for interactive exploration.
@@ -21,16 +21,17 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Set your OpenAI key:
+Set your Google Gemini key:
 
 ```bash
-export OPENAI_API_KEY="your_key_here"
+export GEMINI_API_KEY="your_key_here"
 ```
 
 Optional settings:
 
 ```bash
-export OPENAI_MODEL="gpt-4o"
+export LLM_MODEL="gemini-2.0-flash"
+export LLM_API_BASE_URL="https://generativelanguage.googleapis.com/v1beta/openai/"
 export REQUESTS_PER_MINUTE="30"
 export MAX_RETRIES="5"
 ```

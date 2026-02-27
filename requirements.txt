@@ -1,5 +1,11 @@
 pandas
 numpy
+requests
+osmnx
+geopandas
+shapely
+tqdm
+pyyaml
 scipy
 scikit-learn
 transformers
@@ -8,5 +14,6 @@ matplotlib
 seaborn
 wordcloud
 streamlit
+pydeck
 openai
 statsmodels

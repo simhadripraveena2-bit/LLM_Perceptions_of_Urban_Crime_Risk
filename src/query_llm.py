@@ -1,4 +1,4 @@
-"""Query GPT-4o for numeric and qualitative risk perceptions for each neighborhood."""
+"""Query an LLM for numeric and qualitative risk perceptions for each neighborhood."""
 
 from __future__ import annotations
 
@@ -45,11 +45,11 @@ def call_with_retry(client: OpenAI, prompt: str) -> str:
 
 def query_descriptions() -> pd.DataFrame:
     """Load descriptions and query the LLM for score and qualitative response."""
-    if not SETTINGS.openai_api_key:
-        raise ValueError("OPENAI_API_KEY is required to run query_llm.py")
+    if not SETTINGS.api_key:
+        raise ValueError("openai_api_key is required in config.yaml to run query_llm.py")
 
-    client = OpenAI(api_key=SETTINGS.openai_api_key)
-    descriptions = pd.read_csv(INPUT_PATH)
+    client = OpenAI(api_key=SETTINGS.api_key, base_url=SETTINGS.api_base_url)
+    descriptions = pd.read_csv(INPUT_PATH, usecols=["id", "description"])
     results = []
     delay_seconds = 60 / max(1, SETTINGS.requests_per_minute)
 
